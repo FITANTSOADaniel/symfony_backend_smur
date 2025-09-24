@@ -66,6 +66,14 @@ class User
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $derniereConnexion = null;
 
+    #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'membres')]
+    private Collection $teams;
+
+    public function __construct()
+    {
+        $this->teams = new ArrayCollection();
+    }
+
     public function getId(): ?int{ return $this->id; }
     public function getIdentifiant(): string { return $this->identifiant; }
     public function setIdentifiant(string $identifiant): self { $this->identifiant = $identifiant; return $this; }
@@ -97,8 +105,51 @@ class User
     public function getBureau(): ?string { return $this->bureau; }
     public function setBureau(?string $bureau): self { $this->bureau = $bureau; return $this; }
 
-    public function getRoles(): array { return $this->roles; }
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
+    }
     public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
     public function getDerniereConnexion(): ?\DateTimeImmutable { return $this->derniereConnexion; }
     public function setDerniereConnexion(?\DateTimeImmutable $date): self { $this->derniereConnexion = $date; return $this; }
+
+    /**
+     * @see UserInterface
+     *
+     * Utilisé pour effacer les données sensibles du jeton de l'utilisateur.
+     * La méthode est laissée vide car nous n'utilisons pas de données sensibles (plain text password, salt)
+     */
+    public function eraseCredentials(): void
+    {
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): self
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams->add($team);
+            $team->addMembre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): self
+    {
+        if ($this->teams->removeElement($team)) {
+            $team->removeMembre($this);
+        }
+
+        return $this;
+    }
 }
