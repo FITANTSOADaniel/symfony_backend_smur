@@ -13,10 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-//#[UniqueEntity(fields: ['identifiant'], message: 'Cet identifiant est déjà utilisé.')]
 #[UniqueEntity(fields: ['mail_pro'], message: 'Cet email professionnel est déjà utilisé.')]
 #[UniqueEntity(fields: ['mail_perso'], message: 'Cet email personnel est déjà utilisé.')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -74,7 +73,8 @@ class User
         $this->teams = new ArrayCollection();
     }
 
-    public function getId(): ?int{ return $this->id; }
+    public function getId(): ?int { return $this->id; }
+
     public function getIdentifiant(): string { return $this->identifiant; }
     public function setIdentifiant(string $identifiant): self { $this->identifiant = $identifiant; return $this; }
 
@@ -112,18 +112,30 @@ class User
         return array_unique($roles);
     }
     public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
+
     public function getDerniereConnexion(): ?\DateTimeImmutable { return $this->derniereConnexion; }
     public function setDerniereConnexion(?\DateTimeImmutable $date): self { $this->derniereConnexion = $date; return $this; }
 
     /**
-     * @see UserInterface
-     *
-     * Utilisé pour effacer les données sensibles du jeton de l'utilisateur.
-     * La méthode est laissée vide car nous n'utilisons pas de données sensibles (plain text password, salt)
+     * ✅ Obligatoire pour PasswordAuthenticatedUserInterface
      */
+    public function getPassword(): string
+    {
+        return $this->motDePasse;
+    }
+
+    /**
+     * ✅ Obligatoire pour UserInterface (Symfony 6+)
+     * Ici on utilise l'identifiant comme username
+     */
+    public function getUserIdentifier(): string
+    {
+        return $this->identifiant;
+    }
+
     public function eraseCredentials(): void
     {
-        // $this->plainPassword = null;
+        // S'il y avait des données sensibles en clair, on les nettoierait ici
     }
 
     /**
@@ -140,7 +152,6 @@ class User
             $this->teams->add($team);
             $team->addMembre($this);
         }
-
         return $this;
     }
 
@@ -149,7 +160,6 @@ class User
         if ($this->teams->removeElement($team)) {
             $team->removeMembre($this);
         }
-
         return $this;
     }
 }
