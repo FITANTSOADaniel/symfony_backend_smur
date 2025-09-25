@@ -37,27 +37,9 @@ class UserController extends AbstractController
             'prenom' => $user->getPrenom(),
             'mailPro' => $user->getMailPro(),
             'mailPerso' => $user->getMailPerso(),
+            'accessUser' => $user->getAccesUser(),
+            'accessTeam' => $user->getAccesTeam(),
         ]);
-    }
-
-    public function create(Request $request, EntityManagerInterface $em): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $user = new User();
-        $user->setIdentifiant($data['identifiant']);
-        $user->setNom($data['nom']);
-        $user->setPrenom($data['prenom']);
-        $user->setMailPro($data['mailPro'] ?? null);
-        $user->setMailPerso($data['mailPerso'] ?? null);
-
-        // ⚠️ Hash le mot de passe si nécessaire
-        $user->setMotDePasse(password_hash($data['motDePasse'], PASSWORD_BCRYPT));
-
-        $em->persist($user);
-        $em->flush();
-
-        return $this->json(['message' => 'Utilisateur créé !'], 201);
     }
 
     public function update(User $user, Request $request, EntityManagerInterface $em): JsonResponse
