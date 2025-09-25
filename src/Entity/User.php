@@ -41,11 +41,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, nullable: true, unique: true)]
     #[Assert\Email]
-    private ?string $mail_pro = null;
+    private ?string $mail_pro;
 
     #[ORM\Column(length: 180, nullable: true, unique: true)]
     #[Assert\Email]
-    private ?string $mail_perso = null;
+    private ?string $mail_perso;
 
     #[ORM\Column(length: 255)]
     private string $motDePasse;
