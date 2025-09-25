@@ -13,8 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-#[UniqueEntity(fields: ['mail_pro'], message: 'Cet email professionnel est déjà utilisé.')]
-#[UniqueEntity(fields: ['mail_perso'], message: 'Cet email personnel est déjà utilisé.')]
+#[UniqueEntity(fields: ['mailPro'], message: 'Cet email professionnel est déjà utilisé.')]
+#[UniqueEntity(fields: ['mailPerso'], message: 'Cet email personnel est déjà utilisé.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -41,11 +41,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, nullable: true, unique: true)]
     #[Assert\Email]
-    private ?string $mail_pro;
+    private ?string $mailPro;
 
     #[ORM\Column(length: 180, nullable: true, unique: true)]
     #[Assert\Email]
-    private ?string $mail_perso;
+    private ?string $mailPerso;
 
     #[ORM\Column(length: 255)]
     private string $motDePasse;
@@ -69,14 +69,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $derniereConnexion = null;
 
-    #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'membres')]
-    private Collection $teams;
-
-    public function __construct()
-    {
-        $this->teams = new ArrayCollection();
-    }
-
     public function getId(): ?int { return $this->id; }
 
     public function getIdentifiant(): string { return $this->identifiant; }
@@ -91,11 +83,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPrenom(): string { return $this->prenom; }
     public function setPrenom(string $prenom): self { $this->prenom = $prenom; return $this; }
 
-    public function getMailPro(): ?string { return $this->mail_pro; }
-    public function setMailPro(?string $mail_pro): self { $this->mail_pro = $mail_pro; return $this; }
+    public function getMailPro(): ?string { return $this->mailPro; }
+    public function setMailPro(?string $mailPro): self { $this->mailPro = $mailPro; return $this; }
 
-    public function getMailPerso(): ?string { return $this->mail_perso; }
-    public function setMailPerso(?string $mail_perso): self { $this->mail_perso = $mail_perso; return $this; }
+    public function getMailPerso(): ?string { return $this->mailPerso; }
+    public function setMailPerso(?string $mailPerso): self { $this->mailPerso = $mailPerso; return $this; }
 
     public function getMotDePasse(): string { return $this->motDePasse; }
     public function setMotDePasse(string $motDePasse): self { $this->motDePasse = $motDePasse; return $this; }
@@ -112,29 +104,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getBureau(): ?string { return $this->bureau; }
     public function setBureau(?string $bureau): self { $this->bureau = $bureau; return $this; }
 
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
-    }
+    public function getRoles(): array { $roles = $this->roles; return array_unique($roles); }
     public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
 
     public function getDerniereConnexion(): ?\DateTimeImmutable { return $this->derniereConnexion; }
     public function setDerniereConnexion(?\DateTimeImmutable $date): self { $this->derniereConnexion = $date; return $this; }
 
-    /**
-     * ✅ Obligatoire pour PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): string
     {
         return $this->motDePasse;
     }
-
-    /**
-     * ✅ Obligatoire pour UserInterface (Symfony 6+)
-     * Ici on utilise l'identifiant comme username
-     */
     public function getUserIdentifier(): string
     {
         return $this->identifiant;
@@ -143,30 +122,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // S'il y avait des données sensibles en clair, on les nettoierait ici
-    }
-
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
-    {
-        return $this->teams;
-    }
-
-    public function addTeam(Team $team): self
-    {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->addMembre($this);
-        }
-        return $this;
-    }
-
-    public function removeTeam(Team $team): self
-    {
-        if ($this->teams->removeElement($team)) {
-            $team->removeMembre($this);
-        }
-        return $this;
     }
 }
