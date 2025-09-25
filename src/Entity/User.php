@@ -27,6 +27,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $identifiant;
 
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[Assert\NotBlank]
+    private ?int $numero = null;
+
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
     private string $nom;
@@ -77,6 +81,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getIdentifiant(): string { return $this->identifiant; }
     public function setIdentifiant(string $identifiant): self { $this->identifiant = $identifiant; return $this; }
+
+    public function getNumero(): ?int{ return $this->numero;}
+    public function setNumero(int $numero): self{ $this->numero = $numero;return $this;}
 
     public function getNom(): string { return $this->nom; }
     public function setNom(string $nom): self { $this->nom = $nom; return $this; }
