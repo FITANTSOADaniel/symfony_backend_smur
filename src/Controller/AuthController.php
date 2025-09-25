@@ -14,6 +14,38 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class AuthController extends AbstractController
 {
+
+    public function login(
+        Request $request,
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher,
+        JWTTokenManagerInterface $JWTManager
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $identifiant = $data['identifiant'] ?? '';
+        $password = $data['motDePasse'] ?? '';
+
+        $user = $userRepository->findOneBy(['mail_pro' => $identifiant])
+             ?? $userRepository->findOneBy(['mail_perso' => $identifiant]);
+
+        if (!$user || !$passwordHasher->isPasswordValid($user, $password)) {
+            return new JsonResponse(['message' => 'Identifiant ou mot de passe incorrect'], 401);
+        }
+
+        $token = $JWTManager->create($user);
+
+        return new JsonResponse([
+            'token' => $token,
+            'user' => [
+                'id' => $user->getId(),
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'mail_pro' => $user->getMailPro(),
+                'mail_perso' => $user->getMailPerso(),
+            ]
+        ]);
+    }
+
     public function register(
         Request $request,
         EntityManagerInterface $em,
