@@ -3,6 +3,38 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-    
+
+#routes des auths    
 api_login:
     path: /api/login
+api_register:
+    path: /api/register
+    controller: App\Controller\AuthController::register
+    methods: [POST]
+
+#Routes users
+api_users_index:
+  path: /api/users
+  controller: App\Controller\UserController::index
+  methods: [GET]
+
+api_users_show:
+  path: /api/users/{id}
+  controller: App\Controller\UserController::show
+  methods: [GET]
+
+api_users_create:
+  path: /api/users
+  controller: App\Controller\UserController::create
+  methods: [POST]
+
+api_users_update:
+  path: /api/users/{id}
+  controller: App\Controller\UserController::update
+  methods: [PUT, PATCH]
+
+api_users_delete:
+  path: /api/users/{id}
+  controller: App\Controller\UserController::delete
+  methods: [DELETE]
+

@@ -12,10 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
-#[Route('/api', name: 'api_')]
 class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'register', methods: ['POST'])]
     public function register(
         Request $request,
         EntityManagerInterface $em,
@@ -45,7 +43,6 @@ class AuthController extends AbstractController
         $user->setMotDePasse(
             $hasher->hashPassword($user, $data['motDePasse'])
         );
-        $user->setRoles(['ROLE_USER']);
 
         $lastNumero = $em->getRepository(User::class)
             ->createQueryBuilder('u')
