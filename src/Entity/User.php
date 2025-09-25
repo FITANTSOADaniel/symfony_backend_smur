@@ -63,8 +63,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $bureau = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $roles = [];
+    #[ORM\Column(type: 'boolean')]
+    private bool $accesUser = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $accesTeam = false;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $derniereConnexion = null;
@@ -104,20 +107,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getBureau(): ?string { return $this->bureau; }
     public function setBureau(?string $bureau): self { $this->bureau = $bureau; return $this; }
 
-    public function getRoles(): array { $roles = $this->roles; return array_unique($roles); }
-    public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
-
     public function getDerniereConnexion(): ?\DateTimeImmutable { return $this->derniereConnexion; }
     public function setDerniereConnexion(?\DateTimeImmutable $date): self { $this->derniereConnexion = $date; return $this; }
 
-    public function getPassword(): string
-    {
-        return $this->motDePasse;
-    }
-    public function getUserIdentifier(): string
-    {
-        return $this->identifiant;
-    }
+    public function getAccesUser(): bool { return $this->accesUser; }
+    public function setAccesUser(bool $accesUser): self { $this->accesUser = $accesUser; return $this; }
+
+    public function getAccesTeam(): bool { return $this->accesTeam; }
+    public function setAccesTeam(bool $accesTeam): self { $this->accesTeam = $accesTeam; return $this; }
+
+    public function getPassword(): string{ return $this->motDePasse; }
+    public function getUserIdentifier(): string { return $this->identifiant; }
 
     public function eraseCredentials(): void
     {

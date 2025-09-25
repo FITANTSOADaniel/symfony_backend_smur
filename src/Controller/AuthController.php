@@ -41,8 +41,7 @@ class AuthController extends AbstractController
                 'nom' => $user->getNom(),
                 'prenom' => $user->getPrenom(),
                 'mail_pro' => $user->getMailPro(),
-                'mail_perso' => $user->getMailPerso(),
-                'role' =>$user->getRoles()
+                'mail_perso' => $user->getMailPerso()
             ]
         ]);
     }

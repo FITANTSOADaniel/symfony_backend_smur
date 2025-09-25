@@ -23,7 +23,6 @@ class UserController extends AbstractController
             'prenom' => $u->getPrenom(),
             'mailPro' => $u->getMailPro(),
             'mailPerso' => $u->getMailPerso(),
-            'roles' => $u->getRoles(),
         ], $users);
 
         return $this->json($data);
@@ -38,7 +37,6 @@ class UserController extends AbstractController
             'prenom' => $user->getPrenom(),
             'mailPro' => $user->getMailPro(),
             'mailPerso' => $user->getMailPerso(),
-            'roles' => $user->getRoles(),
         ]);
     }
 
@@ -52,7 +50,6 @@ class UserController extends AbstractController
         $user->setPrenom($data['prenom']);
         $user->setMailPro($data['mailPro'] ?? null);
         $user->setMailPerso($data['mailPerso'] ?? null);
-        $user->setRoles($data['roles'] ?? ['ROLE_USER']);
 
         // ⚠️ Hash le mot de passe si nécessaire
         $user->setMotDePasse(password_hash($data['motDePasse'], PASSWORD_BCRYPT));
@@ -71,7 +68,6 @@ class UserController extends AbstractController
         if (isset($data['prenom'])) $user->setPrenom($data['prenom']);
         if (isset($data['mailPro'])) $user->setMailPro($data['mailPro']);
         if (isset($data['mailPerso'])) $user->setMailPerso($data['mailPerso']);
-        if (isset($data['roles'])) $user->setRoles($data['roles']);
         if (isset($data['motDePasse'])) {
             $user->setMotDePasse(password_hash($data['motDePasse'], PASSWORD_BCRYPT));
         }
