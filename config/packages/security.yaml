@@ -7,18 +7,12 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: identifiant
 
     firewalls:
         login:
             pattern: ^/api/login
             stateless: true
-            json_login:
-                check_path: /api/login
-                username_path: identifiant     # champ JSON
-                password_path: motDePasse      # champ JSON
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            security: false 
 
         api:
             pattern: ^/api

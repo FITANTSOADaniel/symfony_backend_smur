@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +26,7 @@ class AuthController extends AbstractController
         $identifiant = $data['identifiant'] ?? '';
         $password = $data['motDePasse'] ?? '';
 
-        $user = $userRepository->findOneBy(['mail_pro' => $identifiant])
-             ?? $userRepository->findOneBy(['mail_perso' => $identifiant]);
+        $user = $userRepository->findOneBy(['mailPro' => $identifiant]) ?? $userRepository->findOneBy(['mailPerso' => $identifiant]);
 
         if (!$user || !$passwordHasher->isPasswordValid($user, $password)) {
             return new JsonResponse(['message' => 'Identifiant ou mot de passe incorrect'], 401);
@@ -35,13 +35,14 @@ class AuthController extends AbstractController
         $token = $JWTManager->create($user);
 
         return new JsonResponse([
-            'token' => $token,
+            'token11' => $token,
             'user' => [
                 'id' => $user->getId(),
                 'nom' => $user->getNom(),
                 'prenom' => $user->getPrenom(),
                 'mail_pro' => $user->getMailPro(),
                 'mail_perso' => $user->getMailPerso(),
+                'role' =>$user->getRoles()
             ]
         ]);
     }
