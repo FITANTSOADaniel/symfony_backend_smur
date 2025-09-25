@@ -115,7 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getAccesTeam(): bool { return $this->accesTeam; }
     public function setAccesTeam(bool $accesTeam): self { $this->accesTeam = $accesTeam; return $this; }
-
+    public function getRoles(): array { return ['ROLE_USER']; }
     public function getPassword(): string{ return $this->motDePasse; }
     public function getUserIdentifier(): string { return $this->identifiant; }
 

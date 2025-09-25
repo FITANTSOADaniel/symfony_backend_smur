@@ -85,6 +85,27 @@ class AuthController extends AbstractController
         $nextNumero = $lastNumero ? $lastNumero + 1 : 1001;
         $user->setNumero($nextNumero);
 
+        $bureau = $user->getBureau();
+
+        if ($bureau) {
+            if (strcasecmp($bureau, 'Paramed SMUR') === 0) {
+                $user->setAccesUser(false);
+                $user->setAccesTeam(false);
+            } elseif (strcasecmp($bureau, 'Med SMUR') === 0) {
+                $user->setAccesUser(true);
+                $user->setAccesTeam(true);
+            } elseif (strcasecmp($bureau, 'SAMU') === 0) {
+                $user->setAccesUser(true);
+                $user->setAccesTeam(false);
+            } elseif (strcasecmp($bureau, 'Cadre') === 0) {
+                $user->setAccesUser(true);
+                $user->setAccesTeam(true);
+            } else {
+                $user->setAccesUser(false);
+                $user->setAccesTeam(false);
+            }
+        }
+
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -102,5 +123,4 @@ class AuthController extends AbstractController
             'token'   => $token
         ], 201);
     }
-
 }
