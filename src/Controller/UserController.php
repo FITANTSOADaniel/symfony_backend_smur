@@ -18,11 +18,9 @@ class UserController extends AbstractController
 
         $data = array_map(fn(User $u) => [
             'id' => $u->getId(),
-            'identifiant' => $u->getIdentifiant(),
+            'email' => $u->getIdentifiant(),
             'nom' => $u->getNom(),
             'prenom' => $u->getPrenom(),
-            'mailPro' => $u->getMailPro(),
-            'mailPerso' => $u->getMailPerso(),
         ], $users);
 
         return $this->json($data);
